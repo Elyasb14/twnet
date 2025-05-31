@@ -4,21 +4,24 @@ The network architecture and documentation for the tinyweather network.
 
 ## Overview
 
-It all basically comes down to a [wireguard](wireguard.org) VPN. Nodes will establish vpn tunnels with "core" routers which will be connected to proxy and tsdb servers. Below we will describe private ip address allocations for nodes, proxy servers, tsdb servers, wireguard interfaces, etc.... 
-
-# Allocations
+It all basically comes down to a [wireguard](wireguard.org) VPN. Nodes will be "peers" and will tunnel to "core" routers where they can gain access to proxy and tsdb servers. 
 
 ## Wireguard
 
-Each vpn tunnel between the first "core" router and a node will be defined by a network in the address space `10.0.3.0/24 subnet`. If we ever get another core router, we can define another subnet of `10.0.4.0/24` and so on. Each wireguard tunnel will be a subnet of `10.0.3.0/24` with the template `10.0.3.x/30` with the high address being the node side and the low address being the router side. So as an example
+Each vpn tunnel between the first "core" router and a node will be defined by a network in the address space `10.0.3.0/24`. If we ever get another core router, we can define another subnet of `10.0.4.0/24` and so on. Each wireguard tunnel will be created with a "peer" with address `10.0.3.x/32`. This peer will be the node. Below is a description of what that process looks like in practice. Lets say we have router1 and node1. Router1 has a wireguard interface with a private and public key, and a port it listens on. Router 1 also has an address of `10.0.3.1/24` assosciated with the wireguard interface. Node 1 will be a wireguard peer with a public and private key and an address of `10.0.3.2/32`. On node1, there will be a configuration file that looks something like the following:
 
-| Test Network|  `10.0.3.0/30`|
-| -------- | ------- |
-| Network addr | `10.0.3.0`|
-| Core router addr | `10.0.3.1` |
-| Node addr | `10.0.3.2` |
-| Broadcast addr | `10.0.3.3` |
 
-## Loopback addr
+```
+[Interface]
+PrivateKey = <node1-privatekey> 
+ListenPort = 14008
+Address = 10.0.3.2/32
+DNS = 1.1.1.1
 
-Each of the core routers need a loopback address for dynamic routing reasons. These will come from the address space `
+[Peer]
+PublicKey = <router1-publickey> 
+AllowedIPs = 0.0.0.0/0
+Endpoint = <router1-ip>:13231
+PersistentKeepalive = 25
+```
+

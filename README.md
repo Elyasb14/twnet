@@ -25,3 +25,13 @@ Endpoint = <router1-ip>:13231
 PersistentKeepalive = 25
 ```
 
+On the router1 side, there will be a wireguard peer that looks like the following:
+
+```routeros
+[admin@home-tik] > /interface/wireguard/peers/print
+Columns: INTERFACE, PUBLIC-KEY, ENDPOINT-PORT, ALLOWED-ADDRESS
+# INTERFACE   PUBLIC-KEY                                    ENDPOINT-PORT  ALLOWED-ADDRESS
+;;; tw-test
+0 wireguard1  <node1-publickey>=          14008 10.0.3.2/32 
+[admin@home-tik] > /interface/wireguard/peers/print
+```

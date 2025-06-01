@@ -81,6 +81,8 @@ sudo rm -rf /etc/wireguard/*
 
 ### `router1` WireGuard Config (MikroTik RouterOS)
 
+Start with a fresh mikrotik router by running `/system/reset-configuration`. 
+
 #### Create Interface and Assign Address
 
 ```shell
@@ -112,6 +114,8 @@ If you have a stock mikrotik firewall you need to add the following rule to the 
 
 ```shell
 /ip firewall filter add chain=input protocol=udp dst-port=13231 action=accept comment="Allow WireGuard"
+/ip firewall filter add chain=input connection-state=established,related action=accept comment="Allow established/related"
+/ip firewall filter add chain=input src-address=10.0.3.0/24 action=accept comment="Allow WG subnet"
 ```
 
 ## Subnet Roles and Addressing Strategy

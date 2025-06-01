@@ -107,6 +107,12 @@ Columns: INTERFACE, PUBLIC-KEY, ENDPOINT-PORT, ALLOWED-ADDRESS
 0 wireguard1  <node1-publickey>=       14008          10.0.3.2/32
 ```
 
+If you have a stock mikrotik firewall you need to add the following rule to the firewall
+
+```shell
+/ip firewall filter add chain=input protocol=udp dst-port=13231 action=accept comment="Allow WireGuard"
+```
+
 ## Subnet Roles and Addressing Strategy
 
 - **Router uses `/24`** to allow routing across the full subnet (`10.0.3.0/24`).

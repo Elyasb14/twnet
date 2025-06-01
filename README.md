@@ -23,6 +23,7 @@ Each VPN tunnel between a **core router** and a **node** is defined using the ad
 
 #### Key Exchange
 - Each side generates its own private/public key pair.
+    - generate that pair on the node by running `wg genkey | tee privatekey | wg pubkey > publickey`
 - Public keys are exchanged and used to authenticate the tunnel.
 
 ### `node1` WireGuard Config (Linux)

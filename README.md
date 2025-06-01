@@ -27,6 +27,14 @@ Each VPN tunnel between a **core router** and a **node** is defined using the ad
 
 ### `node1` WireGuard Config (Linux)
 
+Install wireguard however you want. On Ubuntu you can run the following
+
+```bash
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install wireguard-tools -y
+```
+Then, you can add the following configuration to `/etc/wireguard/wg0.conf`:
+
 ```ini
 [Interface]
 PrivateKey = <node1-privatekey>
@@ -41,6 +49,31 @@ Endpoint = <router1-public-ip>:13231
 PersistentKeepalive = 25
 ```
 
+Then run the following to bring this all up 
+
+```bash
+sudo chmod 600 /etc/wireguard/wg0.conf 
+sudo wg-quick up wg0
+sudo systemctl start wg-quick@wg0
+sudo systemctl enable wg-quick@wg0
+```
+
+Then check the status using
+
+```bash
+sudo wg
+```
+
+If you need to troubleshoot and completely purge wg from your machine, you can run the following
+
+```bash
+sudo wg-quick down wg0
+sudo ip link delete wg0  # If wg-quick down doesn't remove it
+sudo systemctl stop wg-quick@wg0
+sudo systemctl disable wg-quick@wg0
+sudo rm -rf /etc/wireguard/*
+```
+
 #### Notes:
 - `AllowedIPs = 0.0.0.0/0` routes **all traffic** through the VPN (i.e., full tunnel).
 - `PersistentKeepalive = 25` helps maintain the tunnel through NAT/firewalls.
@@ -50,7 +83,7 @@ PersistentKeepalive = 25
 #### Create Interface and Assign Address
 
 ```shell
-/interface/wireguard/add name=wireguard1 listen-port=13231 private-key=<router1-privatekey>
+/interface/wireguard/add name=wireguard1 listen-port=13231
 /ip/address/add address=10.0.3.1/24 interface=wireguard1
 ```
 
@@ -73,6 +106,12 @@ Columns: INTERFACE, PUBLIC-KEY, ENDPOINT-PORT, ALLOWED-ADDRESS
 # INTERFACE   PUBLIC-KEY               ENDPOINT-PORT  ALLOWED-ADDRESS
 0 wireguard1  <node1-publickey>=       14008          10.0.3.2/32
 ```
+
+### `node1` WireGuard Config (linux) 
+
+```
+
+Then, add a config file to 
 
 ## Subnet Roles and Addressing Strategy
 
